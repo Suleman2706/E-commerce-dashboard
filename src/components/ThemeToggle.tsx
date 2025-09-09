@@ -1,6 +1,4 @@
-"use client";
 import { useEffect, useState } from 'react';
-import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
@@ -8,35 +6,49 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    const isDark = document.documentElement.classList.contains('dark');
-    setDarkMode(isDark);
+
+    try {
+      const stored = localStorage.getItem('theme'); // 'dark' or 'light' or null
+      if (stored === 'dark') {
+        document.documentElement.classList.add('dark');
+        setDarkMode(true);
+      } else if (stored === 'light') {
+        document.documentElement.classList.remove('dark');
+        setDarkMode(false);
+      } else {
+        // no preference stored — use OS preference
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', prefersDark);
+        setDarkMode(prefersDark);
+      }
+    } catch (e) {
+      // localStorage might be disabled — ignore
+      console.warn('Theme init error', e);
+    }
   }, []);
 
   const toggleTheme = () => {
-    const html = document.documentElement;
-    html.classList.toggle('dark');
-    const isDark = html.classList.contains('dark');
-    setDarkMode(isDark);
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    try {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      setDarkMode(isDark);
+    } catch (e) {
+      console.warn('Toggle theme error', e);
+    }
   };
 
-  if (!mounted) return null;
+  if (!mounted) return null; // prevents SSR hydration mismatch
 
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-lg 
-        bg-gray-100 
-        dark:bg-gray-900
-        text-gray-800 dark:text-white
-        transition-all duration-200"
       aria-label="Toggle dark mode"
+      aria-pressed={darkMode}
+      className="p-3 rounded-lg bg-gray-200 dark:bg-gray-700 transition-colors"
+      title={darkMode ? 'Switch to light' : 'Switch to dark'}
     >
-      {darkMode ? (
-        <MoonIcon className="h-5 w-5" />
-      ) : (
-        <SunIcon className="h-5 w-5" />
-      )}
+      {darkMode ? '🌞' : '🌙'}
     </button>
   );
 }
