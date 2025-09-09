@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import ProductGrid from "@/components/ProductGrid";
 import SortDropdown from "@/components/SortDropdown";
 import CategoryFilter from "@/components/CategoryFilter";
-import ThemeToggle from "@/components/ThemeToggle";
 import SearchBar from "@/components/SearchBar";
 
 interface Product {
@@ -57,7 +56,6 @@ export default function Home() {
     <div className="min-h-screen p-4 sm:p-8 dark:bg-gray-900 dark:text-white">
       <header className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
         <h1 className="text-2xl font-bold">Mini E-Commerce Dashboard</h1>
-        <ThemeToggle />
       </header>
       
       <div className="flex flex-col sm:flex-row gap-4 mb-6">

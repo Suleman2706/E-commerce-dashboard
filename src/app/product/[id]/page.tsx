@@ -4,6 +4,7 @@ import { useParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useCart } from "@/contexts/CartContext"
 
 interface Product {
   id: number
@@ -23,6 +24,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { addToCart } = useCart()
 
   useEffect(() => {
     if (!id) return
@@ -38,12 +40,9 @@ export default function ProductPage() {
       })
   }, [id])
 
-  const addToCart = () => {
+  const handleAddToCart = () => {
     if (!product) return
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]")
-    cart.push(product)
-    localStorage.setItem("cart", JSON.stringify(cart))
-    alert("Product added to cart!")
+    addToCart(product)
   }
 
   if (loading) return <div>Loading...</div>
@@ -75,7 +74,7 @@ export default function ProductPage() {
             {product.rating.count} reviews)
           </div>
           <button
-            onClick={addToCart}
+            onClick={handleAddToCart}
             className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
           >
             Add to Cart

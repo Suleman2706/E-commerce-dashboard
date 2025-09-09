@@ -34,3 +34,30 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Add to your existing CSS */
+select option {
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Add these styles for consistent select options */
+select option {
+  background-color: inherit;
+  color: inherit;
+}
+
+.dark select option {
+  background-color: black;
+  color: white;
+}
+
+/* Ensure Firefox respects the colors */
+@-moz-document url-prefix() {
+  select,
+  select:-moz-focusring,
+  select::-moz-focus-inner {
+    color: inherit !important;
+    background-color: inherit !important;
+  }
+}
