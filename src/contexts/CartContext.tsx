@@ -1,9 +1,22 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
 
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  rating: {
+    rate: number;
+    count: number;
+  };
+}
+
 type CartContextType = {
   cartCount: number;
-  addToCart: (product: any) => void;
+  addToCart: (product: Product) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -12,13 +25,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    // Load initial cart count from localStorage
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]") as Product[];
     setCartCount(cart.length);
   }, []);
 
-  const addToCart = (product: any) => {
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const addToCart = (product: Product) => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]") as Product[];
     cart.push(product);
     localStorage.setItem("cart", JSON.stringify(cart));
     setCartCount(cart.length);
@@ -38,20 +50,3 @@ export const useCart = () => {
   }
   return context;
 };
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: setInitialTheme }} />
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <CartProvider>{children}</CartProvider>
-      </body>
-    </html>
-  );
-}

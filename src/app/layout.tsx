@@ -1,37 +1,25 @@
-import type { Metadata } from "next";
+// app/layout.tsx
 import { Geist } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
 import Navbar from "@/components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
-// Updated script to ensure it runs before page render
-const setInitialTheme = `
+const setInitialTheme = `(function() {
   try {
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  } catch (e) {
-    console.error('Theme initialization failed:', e)
-  }
-`;
+    const isDark = localStorage.theme === 'dark' || 
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (isDark) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  } catch (e) { console.error('Theme initialization failed:', e); }
+})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: setInitialTheme
-          }}
-          id="theme-init"
-        />
+        <script dangerouslySetInnerHTML={{ __html: setInitialTheme }} id="theme-init" />
       </head>
       <body className={`${geistSans.variable} antialiased`}>
         <CartProvider>
@@ -42,4 +30,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-
